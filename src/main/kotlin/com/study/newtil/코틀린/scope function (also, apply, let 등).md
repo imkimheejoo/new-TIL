@@ -103,7 +103,8 @@ fun main() {
 - run, with, apply
 - `this.변수명`, `this.함수명()` 이렇게 사용가능하고 심지어 this 생략가능하다.
 - 하지만 this를 생략하면 외부 함수와 object context의 함수와 헷갈릴 가능성이 높다.
-  -  따라서 컨텍스트 객체를 수신자(this)로 사용하는 것은 **주로 객체 멤버에서 작동하는 람다(해당 기능 호출 또는 속성 할당)에 권장**된다.
+    - 따라서 컨텍스트 객체를 수신자(this)로 사용하는 것은 **주로 객체 멤버에서 작동하는 람다(해당 기능 호출 또는 속성 할당)에 권장**된다.
+
 ```kotlin
 fun main() {
     val person = Person("heejoo")
@@ -118,15 +119,60 @@ data class Person(val name: String)
 ```
 
 **it**
+
 - let, also
 - 이름을 딱히 짓지 않으면 디폴트 `it`으로 접근한다. (이름 지정가능)
 - this 와 달리 생략이 불가능하다.
 - 코드블록에서 여러 변수들이 사용될때 좋다... (왜?)
+
 ```kotlin
 fun getRandomInt(): Int {
-  return Random.nextInt(100).also { it ->
-    writeToLog("getRandomInt() generated value $it")
-  }
+    return Random.nextInt(100).also { it ->
+        writeToLog("getRandomInt() generated value $it")
+    }
 }
 ```
 
+### Return value
+
+- **context object를 반환: apply, also**
+    - **함수체이닝이 가능하다.**
+
+```kotlin
+val numberList = mutableListOf<Double>()
+
+numberList
+    .also { println("Populating the list") }
+    .apply {
+        add(2.71)
+        add(3.14)
+        add(1.0)
+    }
+    .also { println("Sorting the list") }
+    .sort()
+
+```
+
+- **lambda 식의 반환값을 반환: let, run, with**
+    - 람다식의 결과를 변수에 넣고 결과에 관한 다음 작업을 할 때 유용하다.
+
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+val countEndsWithE = numbers.run {
+    add("four")
+    add("five")
+    count { it.endsWith("e") }
+}
+println("There are $countEndsWithE elements that end with e.")
+```
+
+- lambda result 값을 무시하고 void 형식으로도 사용이 가능하다.
+
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+with(numbers) {
+    val firstItem = first()
+    val lastItem = last()
+    println("First item: $firstItem, last item: $lastItem")
+}
+```
