@@ -122,6 +122,31 @@ val firstAndLast = with(numbers) {
 println(firstAndLast)
 ```
 
+### apply
+```kotlin
+public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T    // it으로 접근, 자기자신을 반환
+```
+- apply는 람다식에서 반환값이 없다. (Unit)
+- apply는 객체의 정보들을 변경하거나 할당할때 주로 쓰인다. (비유하자면 객체 configuration)
+- 함수체이닝이 가능하기 때문에 객체에서 복잡한 세팅이 필요할 때 가독성을 좋게 짤 수 있다.
+```kotlin
+val adam = Person("Adam").apply {
+    age = 32
+    city = "London"        
+}
+println(adam)
+
+val newAdam = adam
+  .apply {
+    age = it.age + 1
+  }.apply {
+    city = "LA"
+  }
+
+println(newAdam)
+```
+
+
 ### context object: this / it
 
 - this: lambda receiver  (람다 수신자) 로 객체 정보 접근
