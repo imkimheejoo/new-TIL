@@ -35,25 +35,29 @@
 ### let
 
 ```kotlin
-public inline fun <T, R> T.let(block: (T) -> R): R
+public inline fun <T, R> T.let(block: (T) -> R): R  // it으로 객체 접근, 람다 결과값을 return
 ```
 
 - 객체의 확장함수로, 람다의 반환값이 return 된다.
 - null 이 아닌 객체를 이용해서 **어떤 로직을 실행시킬 때** 사용하면 좋다.
-
-
 - 예제
 
 ```kotlin
 data class Person(val name: String, val age: Int)
 
 fun main() {
-    val person = Person("heejoo", 28)
-    val introduceComment = person.let {
-        "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
-    }
+  val person = Person("heejoo", 28)
+  val introduceComment = person.let {
+    "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
+  }
 
-    println(introduceComment)
+  println(introduceComment)
+
+  // 또는
+  person.let {
+    val comment = "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
+    println(comment)
+  }
 }
 ```
 
@@ -78,6 +82,29 @@ fun main() {
 
     kotlin.run { }
 }
+```
+
+### with
+```kotlin
+public inline fun <T, R> with(receiver: T, block: T.() -> R): R // this로 접근(생략가능), 람다 결과값을 반환
+```
+- 람다 결과값아 없는 (void) 로직을 구현할 때 권장한다. -> 왜..?
+- 예제
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+with(numbers) {
+    println("'with' is called with argument $this")
+    println("It contains $size elements")
+}
+```
+- 어떤 값을 계산할 때 with을 권장한다. -> 왜..?
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+val firstAndLast = with(numbers) {
+    "The first element is ${first()}," +
+    " the last element is ${last()}"
+}
+println(firstAndLast)
 ```
 
 ### context object: this / it
