@@ -7,7 +7,7 @@
 > 예) also, apply, let, run, with
 >
 
-### scope function의 특징
+### scope function의 특징 - 가독성 Good
 
 - scope function을 사용하면 임시로 코드가 실행되는 범위가 형성되며, 이 안에서 객체의 정보를 조금 더 간결하게 사용할 수 있다.
     - 가령, 객체의 특정 프로퍼티를 객체이름 없이 엑세스가 가능하다.
@@ -39,25 +39,32 @@ public inline fun <T, R> T.let(block: (T) -> R): R  // it으로 객체 접근, �
 ```
 
 - 객체의 확장함수로, 람다의 반환값이 return 된다.
-- null 이 아닌 객체를 이용해서 **어떤 로직을 실행시킬 때** 사용하면 좋다.
-- 예제
+- **null 이 아닌** 객체를 이용해서 **어떤 로직을 실행시킬 때** 사용하면 좋다. (Executing a lambda on non-null objects)
 
 ```kotlin
-data class Person(val name: String, val age: Int)
+data class Person(val name: String, val age: Int, val country: String? = null)
 
 fun main() {
-  val person = Person("heejoo", 28)
-  val introduceComment = person.let {
-    "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
-  }
+    // 예제1
+    val person = Person("heejoo", 28)
+    val introduceComment = person.let {
+        "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
+    }
 
-  println(introduceComment)
+    println(introduceComment)
 
-  // 또는
-  person.let {
-    val comment = "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
-    println(comment)
-  }
+    // 또는
+    person.let {
+        val comment = "안녕, 나는 ${it.age}세 ${it.name} 라고 해"
+        println(comment)
+    }
+
+    // 예제2
+    val country: String? = person.country
+    val len = country?.let {          // country가 null이 아닐 때만 let이 실행된다.
+        println("I'm from $country")
+        it.length
+    } ?: 0
 }
 ```
 
@@ -80,8 +87,10 @@ fun main() {
 }
 
 ```
-- run 은 객체 생성(초기화)하고 그 **객체에 관련된 로직을 실행시키려할** 때 유용하다.
-  - 그래서 run 은 let 과 같은 성격을 지닌다.
+
+- run 은 **객체 생성(초기화)하고 그 객체에 관련된 로직을 실행시키려할** 때 유용하다.
+    - 그래서 run 은 let 과 같은 성격을 지닌다.
+
 ```kotlin
 val service = MultiportService("https://example.kotlinlang.org", 80)
 
@@ -97,14 +106,16 @@ val letResult = service.let {
 }
 ```
 
-
-
 ### with
+
 ```kotlin
 public inline fun <T, R> with(receiver: T, block: T.() -> R): R // this로 접근(생략가능), 람다 결과값을 반환
 ```
+
+- 객체에 여러 작업을 해야할 때 권장한다. (Grouping function calls on an object)
 - 람다 결과값아 없는 (void) 로직을 구현할 때 권장한다. -> 왜..?
 - 예제
+
 ```kotlin
 val numbers = mutableListOf("one", "two", "three")
 with(numbers) {
@@ -112,74 +123,85 @@ with(numbers) {
     println("It contains $size elements")
 }
 ```
-- 어떤 값을 계산할 때 with을 권장한다. -> 왜..?
+
+- 어떤 값을 계산하고 그 값을 반환 할 때 with을 권장한다.
+    - let 이랑 같은 성격을 띄고 있으나 let은 it을 써야하기 때문에 with가 가능한 상황이면 let보단 with가 더 간결하다.
+        - 그렇다면 let은 언제? `null` check 를 간편하게 하고 싶을 때 사용한다. (Executing a lambda on non-null objects)
+
 ```kotlin
 val numbers = mutableListOf("one", "two", "three")
 val firstAndLast = with(numbers) {
     "The first element is ${first()}," +
-    " the last element is ${last()}"
+        " the last element is ${last()}"
 }
 println(firstAndLast)
 ```
 
 ### apply
+
 ```kotlin
 public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T    // it으로 접근, 자기자신을 반환
 ```
+
 - apply는 람다식에서 반환값이 없다. (Unit)
 - apply는 수신객체의 정보들을 변경해서(no copy) 리턴할 때 주로 쓰인다. (비유하자면 객체 configuration)
-  - 수신객체에 copy를 적용함으로써 새로운 객체를 만들 때는 let이 더 어울린다. (객체 내부정보롤 변경시킨게 아니기 때문) 
-    - 어차피 apply는 자기자신을 반환하고 람다 리턴타입도 void라 새 객체로 바뀌지 않음
+    - 수신객체에 copy를 적용함으로써 새로운 객체를 만들 때는 let이 더 어울린다. (객체 내부정보롤 변경시킨게 아니기 때문)
+        - 어차피 apply는 자기자신을 반환하고 람다 리턴타입도 void라 새 객체로 바뀌지 않음
+
 ```kotlin
 data class Person(val name: String, val age: Int)
+
 fun main() {
-    val heejoo = Person("heejoo", 28).apply { 
+    val heejoo = Person("heejoo", 28).apply {
         it.copy(age = 29)   // 람다 반환값이 void이기 때문에 copy된 새 객체는 변수에 할당 되지 않는다.
     }
-    
+
     assertTrue(heejoo.age == 28)
 }
 ```
+
 - 함수체이닝이 가능하기 때문에 객체에서 복잡한 세팅이 필요할 때 가독성을 좋게 짤 수 있다.
+
 ```kotlin
 val adam = Person("Adam").apply {
     age = 32
-    city = "London"        
+    city = "London"
 }
 println(adam)
 
 val newAdam = adam
-  .apply {
-    age = it.age + 1
-  }.apply {
-    city = "LA"
-  }
+    .apply {
+        age = it.age + 1
+    }.apply {
+        city = "LA"
+    }
 
 println(newAdam)
 ```
 
 ### also
+
 ```kotlin
 public inline fun <T> T.also(block: (T) -> kotlin.Unit): T  // it으로 접근, 자기자신 반환
 ```
+
 - 객체를 통해 무언가 부가적인 작업(additional effects)을 해야할 때 권장한다. (ex. 로깅)
 - apply와 같이 람다 결과반환 타입이 없다.
+
 ```kotlin
 data class Person(val name: String, val age: Int) {
-  companion object {
-    fun init(name: String, age: Int): Person {
-      Person(
-        name = name.also { println("Hi. My name is $name") },   // 로깅(부가적인 작업)
-        age = age,
-      )
+    companion object {
+        fun init(name: String, age: Int): Person {
+            Person(
+                name = name.also { println("Hi. My name is $name") },   // 로깅(부가적인 작업)
+                age = age,
+            )
+        }
     }
-  }
 }
 
 val person = Person("heejoo", 28)
 ```
-
-
 
 ### context object: this / it
 
@@ -277,3 +299,7 @@ with(numbers) {
     println("First item: $firstItem, last item: $lastItem")
 }
 ```
+
+### 출처
+- https://kotlinlang.org/docs/scope-functions.html
+- http://batmask.net/index.php/2021/12/10/286/
