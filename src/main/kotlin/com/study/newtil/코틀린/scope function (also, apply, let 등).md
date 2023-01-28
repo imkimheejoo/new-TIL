@@ -146,6 +146,28 @@ val newAdam = adam
 println(newAdam)
 ```
 
+### also
+```kotlin
+public inline fun <T> T.also(block: (T) -> kotlin.Unit): T  // it으로 접근, 자기자신 반환
+```
+- 객체를 통해 무언가 부가적인 작업(additional effects)을 해야할 때 권장한다. (ex. 로깅)
+- apply와 같이 람다 결과반환 타입이 없다.
+```kotlin
+data class Person(val name: String, val age: Int) {
+  companion object {
+    fun init(name: String, age: Int): Person {
+      Person(
+        name = name.also { println("Hi. My name is $name") },   // 로깅(부가적인 작업)
+        age = age,
+      )
+    }
+  }
+}
+
+val person = Person("heejoo", 28)
+```
+
+
 
 ### context object: this / it
 
