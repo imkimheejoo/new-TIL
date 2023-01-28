@@ -127,7 +127,19 @@ println(firstAndLast)
 public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T    // it으로 접근, 자기자신을 반환
 ```
 - apply는 람다식에서 반환값이 없다. (Unit)
-- apply는 객체의 정보들을 변경하거나 할당할때 주로 쓰인다. (비유하자면 객체 configuration)
+- apply는 수신객체의 정보들을 변경해서(no copy) 리턴할 때 주로 쓰인다. (비유하자면 객체 configuration)
+  - 수신객체에 copy를 적용함으로써 새로운 객체를 만들 때는 let이 더 어울린다. (객체 내부정보롤 변경시킨게 아니기 때문) 
+    - 어차피 apply는 자기자신을 반환하고 람다 리턴타입도 void라 새 객체로 바뀌지 않음
+```kotlin
+data class Person(val name: String, val age: Int)
+fun main() {
+    val heejoo = Person("heejoo", 28).apply { 
+        it.copy(age = 29)   // 람다 반환값이 void이기 때문에 copy된 새 객체는 변수에 할당 되지 않는다.
+    }
+    
+    assertTrue(heejoo.age == 28)
+}
+```
 - 함수체이닝이 가능하기 때문에 객체에서 복잡한 세팅이 필요할 때 가독성을 좋게 짤 수 있다.
 ```kotlin
 val adam = Person("Adam").apply {
