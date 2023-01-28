@@ -61,17 +61,13 @@ fun main() {
 }
 ```
 
-### run (작성중)
+### run
 
 ```kotlin
-public inline fun <T, R> T.run(block: T.() -> R): R
-```
+public inline fun <T, R> T.run(block: T.() -> R): R // this로 객체접근, 람다 결과값을 반환
+public inline fun <R> run(block: () -> R): R    // 객체 없이도 사용가능하며, 람다 결과값을 반환
 
-```kotlin
-public inline fun <R> run(block: () -> R): R
-```
-
-```kotlin
+// 예제
 data class Person(val name: String)
 
 fun main() {
@@ -82,7 +78,26 @@ fun main() {
 
     kotlin.run { }
 }
+
 ```
+- run 은 객체 생성(초기화)하고 그 **객체에 관련된 로직을 실행시키려할** 때 유용하다.
+  - 그래서 run 은 let 과 같은 성격을 지닌다.
+```kotlin
+val service = MultiportService("https://example.kotlinlang.org", 80)
+
+val result = service.run {
+    port = 8080
+    query(prepareRequest() + " to port $port")
+}
+
+// the same code written with let() function:
+val letResult = service.let {
+    it.port = 8080
+    it.query(it.prepareRequest() + " to port ${it.port}")
+}
+```
+
+
 
 ### with
 ```kotlin
