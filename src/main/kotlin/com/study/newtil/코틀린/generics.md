@@ -88,10 +88,37 @@ fun main() {
 }
 ```
 
-**이를 우회하는 방법: `inline`**
+**이를 우회하는 방법: `inline & reified`**
 
 - 함수를 inline으로 만들면 **타입인자가 지워지지 않게 할 수 있다**. == reify(실체화)
     - 그 이유는 **inline 함수는 컴파일 시점에 해당 로직이 바이트 코드로 들어가기 때문에** 실행시점에 타입이 지워지지 않는다.
+
+```kotlin
+// AS-IS
+fun <T> isA(value: Any) = value is T // Error: Cannot check for instance of erased type: T
+
+// TO-BE
+inline fun <reified T> isA2(value: Any) = value is T
+fun main() {
+    println(isA2<String>("abc"))
+}
+```
+
+```kotlin
+public inline fun <reified R> kotlin.collections.Iterable<*>.filterIsInstance()
+
+// 예제
+listOf("Heejoo", 1, 0.5).filterIsInstance<String>() // -> listOf("Heejoo")
+
+```
+
+- **reified R == R타입이 실행시점에도 남아있게 실체화한다.**
+    - **즉 refied(실체화)를 하기 위해선 실행시점에도 정보가 남아야 하기 때문에 inline 을 꼭 같이 써줘야 한다!**
+    - reified는 타입정보를 남긴다는 의미이고, inline 은 코드를 바이트코드로 붙인다는 의미이다.
+
+### reified 의 제약
+
+> **inline 없이는 사용이 불가능하다.**
 
 ### 출처
 
