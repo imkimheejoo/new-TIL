@@ -123,8 +123,51 @@ listOf("Heejoo", 1, 0.5).filterIsInstance<String>() // -> listOf("Heejoo")
 ### 변셩 (variance) - 타입안정성을 보장하는 API 만들 수 있음
 
 Any 타입에 String 타입을 넣어도 안전 But!
-List<Any> 타입에 List<String> 타입은 안전X
+`List<Any>` 타입에 `List<String>` 타입은 안전X
 그 이유는 A타입 리스트에 B타입 원소를 넣거나 수정할 경우 타입불일치가 발생하기 때문이다. (But 읽기전용은 어떻게 넘겨도 안전하다.)
+
+### 무공변
+
+`MutableList<String> 타입`, `MutableList<Any>타입` 가 있을 때, `MutableList<String>`은 `MutableList<Any>`의 하위 타입이 아니다. = 무공변
+
+- `MutableList<String>` 타입의 값을 `MutableList<Any>` 타입을 갖는 파라미터의 함수로 전달이 가능한가? = **NO**
+    - `MutableList<String>`이 `MutableList<Any>`의 하위 타입이 될 수 있는가? 로 해석가능하다.
+- 타입인자들 사이에 하위타입이 성립되지 않을 경우 그 제네릭타입을 무공변이라고 한다.
+
+### 공변
+
+`List<String> 타입`, `List<Any> 타입`이 있을 때, `List<String>`는 `List<Any>` 로 대체 가능하다. = 공변
+
+- `List<String>` 타입의 값을 `List<Any>` 타입을 갖는 파라미터의 함수로 전달이 가능한가? = **YES**
+    - 그 이유는 읽기전용으로 원소 수정/추가 가 이루어지지 않으므로 원소들 내 타입불일치가 일어나도 전혀 영향이 없다.
+- 타입인자들 사이에 하위타입이 성립 될 경우 그 제네릭타입을 공변이라고 한다.
+
+**공변성 (out): 하위 타입 관계를 유지하는 성질**
+
+- A가 B의 하위타입일 때 `클래스이름<A>`가 `클래스이름<B>`의 하위타입이면 `클래스이름`은 공변적이다. = 하위 타입 관계가 유지된다.
+- 코틍린에서 제네릭 클래스가 타입 파라미터에 대해 공변적임을 표시하려면 타입 파라미터 앞에 **out**을 넣어야 한다.
+
+```kotlin
+interface AAA<out T> {
+    fun aaa(): T
+}
+```
+
+- 타입 파라미터를 공변적으로 지정하면 클래스 내부에서 그 파라미터를 사용하는 방법을 제한한다.
+    - 클래스가 T타입의 값을 생산할 수(return)는 있지만 T타입의 값을 소비할(function argument) 수는 없다.
+        - out 키워드를 붙이면 클래스 안에서 T를 사용하는 메소드가 아웃 위치에서만 T를 사용하게 허용하고 인 위치에서는 T를 사용하지 못하게 막는다.
+
+```kotlin
+interface AAA<out T> {
+    // 첫번째 T: in, 두번째 T: out
+//  fun aaa(t: T):T // compile error -> Type parameter T is declared as 'out' but occurs in 'in' position in type T
+    fun aaa(t: Any): T // 정상적인 케이스
+}
+```
+
+- out 키워드는 T의 사용법을 제한하며 T로인해 생기는 하위 타입 관계의 타입 안전성을 보장한다.
+    - 왜냐하면 `t: T`가 가능했을 경우 t를 변형시키기 때문에 타입 불일치로 에러가 날 가능성이 있다. out은 이를 보장하기 때문이다. (소비가 불가능)
+- out 규칙은 **외부에서 클래스를 잘못사용하는 일이 없기를 위해** 만들어 진 것이므로 내부구현에는 적용되지 않는다.
 
 ### 출처
 
