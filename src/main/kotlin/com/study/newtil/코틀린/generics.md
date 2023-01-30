@@ -120,6 +120,12 @@ listOf("Heejoo", 1, 0.5).filterIsInstance<String>() // -> listOf("Heejoo")
 
 > **inline 없이는 사용이 불가능하다.**
 
+### 변셩 (variance) - 타입안정성을 보장하는 API 만들 수 있음
+
+Any 타입에 String 타입을 넣어도 안전 But!
+List<Any> 타입에 List<String> 타입은 안전X
+그 이유는 A타입 리스트에 B타입 원소를 넣거나 수정할 경우 타입불일치가 발생하기 때문이다. (But 읽기전용은 어떻게 넘겨도 안전하다.)
+
 ### 출처
 
 - Kotlin in Action (9장)
