@@ -146,6 +146,7 @@ Any 타입에 String 타입을 넣어도 안전 But!
 
 - A가 B의 하위타입일 때 `클래스이름<A>`가 `클래스이름<B>`의 하위타입이면 `클래스이름`은 공변적이다. = 하위 타입 관계가 유지된다.
 - 코틍린에서 제네릭 클래스가 타입 파라미터에 대해 공변적임을 표시하려면 타입 파라미터 앞에 **out**을 넣어야 한다.
+- 읽기전용 컬랙션에서 자주 쓰인다. (소비(원소 수정,원소 추가) 하지 않으니!) - ex) List
 
 ```kotlin
 interface AAA<out T> {
@@ -175,6 +176,7 @@ interface AAA<out T> {
     - 예시: Producer (공변), Consumer (반공변)
 - **`in`** 이 있으면 이 클래스의 메소드 안 인자로 정의되어 메소드에 의해 소비된다는 뜻이다.
     - in을 쓰면 T는 in위치에서만 쓸 수 있다.
+- mutable collection에서 많이 쓰인다. (소비(원소추가,원소 변경)를 하기때문에!) - ex) MutableList
 
 ```kotlin
 // public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T>
@@ -188,6 +190,57 @@ fun main() {
 // Comparator<Any> 안 로직은 String도 충분히 형변환에러가 안나기 때문에 안전하다 
     listOf("heejoo", "kim").sortedWith(anyComparator)
 }
+```
+
+**사용 지점 변성**
+
+사용하는 지점에 변성을 정의하는 것을 뜻한다.
+
+- 함수에서 쓰이는데, 함수를 **사용**할 때 타입에 대한 제약을 가해 로직의 안정성을 더할 수 있다.
+    - **타입에 제약**을 가하는걸 **타입 프로젝션 (type projection)** 이라고 한다.
+- 사용 지점 변성을 사용하면 타입인자로 사용할 수 있는 타입의 범위가 넓어진다.
+    - 일반 타입 (특정 타입을 명시하는) 방식으로 만들 지 않았기 때문에 여러 타입이 올 수 있다.
+
+```kotlin
+
+// 컬랙션의 원소를 다른 컬랙션 원소에 복사하는 예제
+
+// AS-IS
+fun <T> copyData(sourceData: MutableList<T>, destination: MutableList<T>) {
+    for (item in source) {
+        // source는 읽기만하고(생성), destination은 쓰기(소비)만 한다.
+        destination.add(item)   // source T는 destination T타입의 하위타입이어야 로직이 터지지 않는다. => 제약이 없어서 불안전
+    }
+}
+
+// TO-BE (1) - source 타입을 소비하지 않게 만들기
+fun <T> copyData(sourceData: MutableList<out T>, destination: MutableList<T>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+// TO-BE (2) - destination 타입을 소비하는걸로 만들기
+fun <T> copyData(sourceData: MutableList<T>, destination: MutableList<in T>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+// TO-BE (3) - source의 타입은 destination의 하위 타입 -> T: R
+fun <T : R, R> copyData(sourceData: MutableList<T>, destination: MutableList<R>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+// TO-BE (4) - 읽기만 하는 sourceData에 공변인 List를 사용 (cc. AbstractList<out E> )
+fun <T : R, R> copyData(sourceData: List<T>, destination: MutableList<R>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
 ```
 
 ### 출처
