@@ -169,6 +169,27 @@ interface AAA<out T> {
     - 왜냐하면 `t: T`가 가능했을 경우 t를 변형시키기 때문에 타입 불일치로 에러가 날 가능성이 있다. out은 이를 보장하기 때문이다. (소비가 불가능)
 - out 규칙은 **외부에서 클래스를 잘못사용하는 일이 없기를 위해** 만들어 진 것이므로 내부구현에는 적용되지 않는다.
 
+**반공변성 (in): in에서만 쓰인다**
+
+- 타입 B가 타입 A의 하위 타입일 때, `클래스이름<A>`가  `클래스이름<B>`의 하위타입일 경우 `클래스이름<T>`는 T 에대해 반공변이다.
+    - 예시: Producer (공변), Consumer (반공변)
+- **`in`** 이 있으면 이 클래스의 메소드 안 인자로 정의되어 메소드에 의해 소비된다는 뜻이다.
+    - in을 쓰면 T는 in위치에서만 쓸 수 있다.
+
+```kotlin
+// public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T>
+
+fun main() {
+    val anyComparator = Comparator<Any> { e1, e2 ->
+        e1.hashCode() - e2.hashCode()
+    }
+
+// sortedWith는 Comparator<String> 타입을 갖지만 Comparator<Any>도 가질 수 있었던 이유
+// Comparator<Any> 안 로직은 String도 충분히 형변환에러가 안나기 때문에 안전하다 
+    listOf("heejoo", "kim").sortedWith(anyComparator)
+}
+```
+
 ### 출처
 
 - Kotlin in Action (9장)
