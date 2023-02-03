@@ -243,6 +243,92 @@ fun <T : R, R> copyData(sourceData: List<T>, destination: MutableList<R>) {
 
 ```
 
+### star projection (*)
+
+> 제네릭 타입 정보가 없을 때 사용한다.
+
+- ex) `List<*>`
+- Any와는 전혀 다른 성질이다.
+- 어떤 타입이 들어올 지 모르는데, 그 타입을 로직(또는 함수)에서 쓸 일이 없을 때 유용하다.
+    - 해당 인자를 변경및추가(소비) 하는 로직불가능
+    - 오로지 값을 만들어(생산)내는 로직만 가능
+
+```kotlin
+// 예시
+val list = listOf("heejoo", "kim")
+fun isNotEmptyList(list: List<*>): Boolean {
+    return list.isNotEmpty()    // List 인자가 어떤 타입인지 전혀 필요 없음 (인자 타입에 연관이 없는 안전한 로직)
+}
+
+// star projection 우회방법
+fun <T> printFirst(list: List<T>) {
+    if (isNotEmptyList(list)) {
+        println(list.first())   // T타입의 값을 출력한다.
+    }
+}
+```
+
+- 원소타입이 어떤건지 모른다고 아무 타입이나 가능하다는건 아니다.
+    - 구체적인 타입이 정해지면 그 타입만 가능하다.
+    - out인 경우 구체적인 타입이 정해지기 전까지 `Any?` 타입으로 인식한다.
+    - in인 경우 구체적인 타입이 정해지기 전까지 `Nothing` 타입으로 인식한다.
+        - 안전하지 않은 방법이다. (이유는 예제참고)
+
+```kotlin
+// out 예제
+open class Gender
+
+class Male : Gender()
+class Female : Gender()
+
+class Person<out T : Gender> // 구체적인 타입이 정해진것
+
+fun aaa(person: Person<*>) {    // 타입을 정확하게는 모르나 Gender의 하위타입만 올 것을 알 수 있음 (공변성 성질때문에)
+    println(person.toString())
+}
+
+fun main() {
+    aaa(Person<Male>())   // 가능
+    aaa(Person<Female>()) // 가능
+    aaa(Person<Int>())    // 컴파일 에러
+}
+
+class Animal<T> // 구체적인 타입이 정해지지 않은 것
+
+fun bbb(animal: Animal<*>)  // Animal 의 타입인자가 정의된게 없으므로 Any? 타입으로 인식
+
+fun main2() {
+    bbb(Animal<Int>())    // 가능
+    bbb(Animal<Male>())   // 가능
+    bbb(Anima<Female>()) // 가능
+}
+
+// in 예제
+interface Validator<in T> {
+    fun validate(input: T): Boolean
+}
+
+object StringInputValidator : Validator<String> {
+    override fun validate(input: String): Boolean {
+        return input == "input"
+    }
+}
+
+object IntInputValidator : Validator<Int> {
+    override fun validate(input: Int): Boolean {
+        return input % 2 == 0
+    }
+}
+
+fun main3() {
+    val validators = mutableMapOf<KClass<*>, Validator<*>>()
+    val validator = validators[Int::class]!! as Validator<String>
+    validator.validate("input") // 잘못된 type casting 이지만 compile error가 안나고 validate 할 때 타입 불일치로 에러가 난다.
+}
+
+
+```
+
 ### 출처
 
 - Kotlin in Action (9장)
