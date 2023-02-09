@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'org.springframework.boot' version '2.7.9-SNAPSHOT'
+	id 'org.springframework.boot' version '2.4.3'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'org.jetbrains.kotlin.jvm' version '1.6.21'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.6.21'
@@ -24,7 +24,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
