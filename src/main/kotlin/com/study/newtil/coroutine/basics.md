@@ -87,3 +87,40 @@ fun main() {
 - resume은 자기자신(같은 함수)를 다시 호출하는 역할을 갖는다.
 - `label`: 재개할 때 어디로 가야할지에 대한 정보를 담고있는 변수
 - `result`: 로직이 실행되면서 저장해두고 있어야 하는 데이터를 담고 있는 변수
+
+### Coroutine Scope
+
+> 코루틴이 실행할 수 있는 환경을 만드는 것
+
+- coroutine scope는 coroutine context를 담고 있다.
+- coroutine scope에서 코루틴이 실행되며 취소(중단)된다.
+
+### Coroutine Context
+
+> coroutine을 실행(동작)하기 위한 환경들에 대한 정보
+
+- ex) 어떤 쓰레드에서 실행할지 -> Dispatcher
+- 어떤 동작을 할지 -> Job
+
+**설정요소**
+
+- Job, Dispatcher 등 -> Job, Dispathcer가 coroutine context에 저장된다.
+
+### Dispatcher
+
+> 코루틴이 어떤쓰레드나 어떤 쓰레드풀에서 실행시킬지 결정하는 역할
+
+- 코루틴빌더들은 coroutineContext를 파라미터로 갖고 있다.
+    - 이때 어떤 디스패처를 사용할지 이 파라미터에 전달하는 것이다.
+
+### Job
+
+- Job은 부모-자식관계가 있다. (구조적 동시성 참고)
+- 부모가 cancel되면 자식도 cancel된다.
+- 부모 코루틴은 모든 자식 코루틴들이 끝날때 까지 기다려준다.
+
+### coroutine 디버깅 하는법 (어떤 코루틴에서 실행됐는지 보고 싶을 때)
+
+> Jvm option에 -Dkotlinx.coroutines.debug 를 추가
+
+![img.png](coroutine_debug_option.png)
