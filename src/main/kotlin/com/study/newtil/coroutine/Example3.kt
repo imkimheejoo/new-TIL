@@ -99,7 +99,7 @@ private suspend fun concurrentSum(): Int = coroutineScope {
     one.await() + two.await()
 }
 
-fun main() {
+fun main_ex4() {
     /**
     결과
     one start, Thread[main,5,main]

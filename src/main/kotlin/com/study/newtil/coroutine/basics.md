@@ -78,5 +78,12 @@ fun main() {
 
 - job들을 관리하지 않아도 (ex. join) 여러코루틴들을 기다려준다.
 
+### coroutine의 동작방식
 
+> Continuation Passing Style
 
+- continuation은 callback 같은 것이다. 재개해주는 역할을 갖는 인터페이스
+- 재개할 때 continuation.resume()
+- resume은 자기자신(같은 함수)를 다시 호출하는 역할을 갖는다.
+- `label`: 재개할 때 어디로 가야할지에 대한 정보를 담고있는 변수
+- `result`: 로직이 실행되면서 저장해두고 있어야 하는 데이터를 담고 있는 변수
