@@ -68,11 +68,12 @@ fun main() {
 - CoroutineScope
 - GlobalScope (프로그램의 라이프타임 전체범위)
 
-### 일시 중단함수
-
+### 일시 중단함수 (suspend function)
 - suspend
 - delay
 - join
+- thread를 blocking하지는 않고 코드 실행을 suspend 시키는 것이다.
+- continuation을 통해 다음 로직으로 코드를 재개하는 것이기 때문에 쓰레드를 막지 않는다. 그냥 다음로직이 실행이 안되는 것 뿐이다. 
 
 ### structured concurrency
 
