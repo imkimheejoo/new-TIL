@@ -114,6 +114,12 @@ fun main() {
 - 코루틴빌더들은 coroutineContext를 파라미터로 갖고 있다.
     - 이때 어떤 디스패처를 사용할지 이 파라미터에 전달하는 것이다.
 
+- `Dispatcher.IO`: IO작업(디스크, 네트워크I/O)에 최적화 되어있는 dispatcher
+- `Dispatcher.Default`: CPU를 많이 쓰는 작업에 최적화되어있는 dispatcher
+- `Dispatcher.Unconfined`: 아무 thread혹은 pool에서 수행하는데, 일반적으로 code에서 사용되지 않아야 좋다.
+- `newSingleThreadContext`: 스레드가 1개인 thread pool을 만들어 수행한다.
+- `newFixedThreadPoolContext`: fixed size로 private thread pool을 만들어 수행한다.
+
 ### Job
 
 - Job은 부모-자식관계가 있다. (구조적 동시성 참고)
