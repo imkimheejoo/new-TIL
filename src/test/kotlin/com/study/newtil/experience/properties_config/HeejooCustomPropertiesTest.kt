@@ -1,4 +1,4 @@
-package com.study.newtil.experience
+package com.study.newtil.experience.properties_config
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
