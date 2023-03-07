@@ -23,8 +23,8 @@ class ExampleConfiguration {
     // to-be
     private lateinit var customProperties: HeejooCustomProperties
 
-    @Bean
-    fun example(): String {
-        return customProperties.topic1
-    }
+//    @Bean
+//    fun example(): String {
+//        return customProperties.topic1
+//    }
 }
