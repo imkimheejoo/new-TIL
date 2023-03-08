@@ -23,7 +23,7 @@ public < S extends T > S save (S entity) {
      * 만약 엔티티가 Persistable을 상속받았다면 다른 구현체를 타게 된다.
      */
     if (entityInformation.isNew(entity)) {
-        em.persist(entity);
+        em.persist(entity); // 여기서 em은 SharedEntityManagerCreator - SharedEntityManagerInvocationHandler (proxy)
         return entity;
     } else {
         return em.merge(entity);
@@ -31,6 +31,7 @@ public < S extends T > S save (S entity) {
 }
 
 // JpaMetamodelEntityInformation
+// entityInformation.isNew
 @Override
 public boolean isNew(T entity) {
 
@@ -42,6 +43,7 @@ public boolean isNew(T entity) {
 }
 
 // JpaMetamodelEntityInformation
+// super.isNew
 public boolean isNew(T entity) {
 
     ID id = getId (entity);
@@ -57,4 +59,11 @@ public boolean isNew(T entity) {
 
     throw new IllegalArgumentException (String.format("Unsupported primitive id type %s!", idType));
 }
+
+
 ```
+
+- em은 proxy(SharedEntityManagerCreator)로 되어있다.
+  ![img_1.png](img_1.png)
+  ![img.png](img.png)
+    - 따라서 em.merge() / em.persist() 할 때 SharedEntityManagerCreator 의 invoke를 먼저 하고 각 method에 따라 실제 method를 실행한다.
