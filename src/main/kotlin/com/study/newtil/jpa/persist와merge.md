@@ -67,3 +67,6 @@ public boolean isNew(T entity) {
   ![img_1.png](img_1.png)
   ![img.png](img.png)
     - 따라서 em.merge() / em.persist() 할 때 SharedEntityManagerCreator 의 invoke를 먼저 하고 각 method에 따라 실제 method를 실행한다.
+
+
+## getId 가져오는 방식
