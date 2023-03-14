@@ -48,6 +48,7 @@ public AnnotationConfigServletWebServerApplicationContext(){
 
 - AnnotatedBeanDefinitionReader 생성시 BeanDefinition을 만들어 registry에
   등록한다. `AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry)`
+    - registry.registerBeanDefinition -> DefaultListableBeanFactory의 beanDefinitionMap에 beanName과 beanDefinition을 put
 
 ```java
 public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry,Environment environment){
@@ -75,12 +76,13 @@ public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry,Environment
     - CommandLineRunner 클래스타입의 빈들을 ruuners에 추가 (CommandLineRunner 안만들었으면 아무것도 들어가지 않음)
     - runners에 있는 원소들 실행
 
-[//]: # (todo)
 **refreshContext 함수**
 
-- 여기서 실질적인 bean 만들어줌??
-- getBean해와서..
-- refresh -> 언제 호출된거지
+- refresh
     - applicationContext.refresh()
         - ServletWebServerApplicationContext.java의 refresh 함수
         - super를 호출해서 AbstractApplicationContext에서 실행
+            - invokeBeanFactoryPostProcessors 함수
+              -> `PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());`
+            - beanFactory(DefaultListableBeanFactory) 에서 빈만들고 있다. (registerSingleton)
+              ![img_6.png](img_6.png)
