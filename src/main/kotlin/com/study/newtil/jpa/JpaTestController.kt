@@ -13,11 +13,11 @@ class JpaTestController(
     fun test(@PathVariable id:Long): Any {
         return if(id == 0L) {
             coreEntityRepository.save(
-                CoreEntity(name = "heejoo-new")
+                CoreEntity(name = "heejoo-new", age = 28)
             )
         } else {
             return coreEntityRepository.save(
-                CoreEntity(id = id, name = "heejoo")
+                CoreEntity(id = id, name = "heejoo", age = 28)
             )
         }
     }

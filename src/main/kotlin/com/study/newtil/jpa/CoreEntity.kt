@@ -7,10 +7,13 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class CoreEntity(
+// TODO: 2023/03/18 왜 open class..?
+open class CoreEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
     @Column
-    var name: String
+    var name: String,
+    @Column
+    var age: Int,
 )
