@@ -12,7 +12,8 @@ interface CoreEntityRepository {
      *  Kotlin: Inherited platform declarations clash: The following declarations have the same JVM signature (saveAll(Ljava/lang/Iterable;)Ljava/util/List;):
         fun saveAll(entities: Iterable<CoreEntity>): MutableList<CoreEntity> defined in com.study.newtil.jpa.CoreEntityJpaRepository
         fun <S : CoreEntity?> saveAll(p0: MutableIterable<S>): MutableList<S> defined in com.study.newtil.jpa.CoreEntityJpaRepository
-        CoreEntityJpaRepository에 같은 함수 두개가 있기때문에 충돌
+        CoreEntityJpaRepository에 같은 함수 두개가 있기때문에 충돌리
      */
+    // TODO: 2023/03/18 이렇게 짜도 충돌나는거 아닌가?
     fun <S: CoreEntity> saveAll (entities: Iterable<S>): MutableList<S>
 }
