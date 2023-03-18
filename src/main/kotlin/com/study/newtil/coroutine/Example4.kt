@@ -7,7 +7,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-fun main() {
+fun mainn() {
     GlobalScope.launch {
         val suspendFetchUserData = suspendFetchUserData()
         val suspendCacheUserData = suspendCacheUserData(suspendFetchUserData)

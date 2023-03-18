@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 
-fun main() {
+fun mainnn() {
     // global scope에서 launch를 한것
     GlobalScope.launch {
         delay(1000L)    // 일시 중단 함수
